@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  scraper-dev:
+    # Construye la imagen a partir del Dockerfile
+    build: .
+    
+    # Mapea el directorio actual (código fuente y HTML) al directorio /app del contenedor.
+    # Esto permite al alumno editar Scraper.java localmente y que el contenedor lo vea.
+    volumes:
+      - .:/app
+    
+    # Mantiene el contenedor abierto y listo para la ejecución interactiva.
+    stdin_open: true
+    tty: true
+    
+    # Sobrescribe el ENTRYPOINT (sleep infinity) para que el contenedor
+    # se mantenga vivo y el usuario pueda entrar.
+    command: ["tail", "-f", "/dev/null"]    
+    
+    # Le damos un nombre de contenedor simple para que el alumno pueda referenciarlo.
+    container_name: java-scraper
