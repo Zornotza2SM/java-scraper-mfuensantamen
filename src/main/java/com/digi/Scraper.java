@@ -3,6 +3,7 @@ package com.digi;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import java.io.File;
@@ -19,18 +20,16 @@ public class Scraper {
         
         // 1. Crear el StringBuilder para construir el contenido del CSV
         StringBuilder csvData = new StringBuilder();
-        csvData.append("Titulo;Precio_Euros\n"); // Cabecera del CSV
+        csvData.append("Modelo;Precio_Euros\n"); // Cabecera del CSV
         
         try {
             // Carga el archivo HTML estático localmente
-            File input = new File("index.html");
-            Document doc = Jsoup.parse(input, "UTF-8", ""); 
+            Document doc = Jsoup.connect("https://www.dia.es/search?q=chorizo").get();
             
             System.out.println("Documento HTML cargado. Iniciando el scraping (Extracción de datos)...");
             
             // 2. Seleccionar todos los contenedores de producto
-            Elements productos = doc.select(".producto"); 
-            
+            Elements productos = doc.select(".search-product-card"); 
             // ----------------------------------------------------
             // FASE 2: Preprocesamiento (Extracción y Limpieza)
             // Tareas del Alumno: Completar la lógica de extracción y limpieza.
@@ -39,10 +38,10 @@ public class Scraper {
             for (Element producto : productos) {
                 
                 // Tarea A: Extraer el título
-                String titulo = producto.select(".titulo-producto").text();
+                String nombreProducto = producto.select(".search-product-card__product-name").text();
                 
                 // Tarea B: Extraer el precio como texto
-                String precioTexto = producto.select(".precio").text();
+                String precioTexto = producto.select(".search-product-card__active-price").text();
                 
                 // Tarea C: Limpieza del Dato (EL ALUMNO COMPLETA ESTA LÓGICA)
                 String precioLimpio = precioTexto;
@@ -56,7 +55,7 @@ public class Scraper {
                 // ----------------------------------------------------------------------------------
                 
                 // 3. Estructurar el dato: Añadir al StringBuilder en formato CSV
-                csvData.append(titulo).append(";").append(precioLimpio).append("\n");
+                csvData.append(nombreProducto).append(";").append(precioLimpio).append("\n");
             }
             
             // ----------------------------------------------------
